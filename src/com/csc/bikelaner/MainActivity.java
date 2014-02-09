@@ -1,5 +1,6 @@
 package com.csc.bikelaner;
 
+import com.csc.bikelaner.db.LocalDataStore;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -22,7 +23,7 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		// Set map layout as the main view
 		setContentView(R.layout.map_layout);
-		new LocalDB(getApplicationContext());
+		new LocalDataStore(getApplicationContext());
 	}
 
 	
