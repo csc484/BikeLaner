@@ -5,6 +5,7 @@ import java.util.Observer;
 
 import android.content.Context;
 import android.hardware.SensorManager;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -66,6 +67,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 		init_Buttons();
 		
 		new LocalDataStore(getApplicationContext());
+		
 	}
 
 	@Override
@@ -101,10 +103,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 			break;
 		case R.id.btnDisplayMap:
 			setContentView(R.layout.map_layout);
-			gpsHandler = new GPSHandler(
-					(LocationManager) getSystemService(LOCATION_SERVICE),
-					getSupportFragmentManager());
-			gpsHandler.initiate();
+			LocationManager manager = (LocationManager) getSystemService(LOCATION_SERVICE);					
+			gpsHandler = new GPSHandler(manager, getSupportFragmentManager());
+			gpsHandler.initiate();		
 			break;
 		default:
 			break;
