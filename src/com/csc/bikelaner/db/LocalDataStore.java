@@ -1,18 +1,20 @@
 package com.csc.bikelaner.db;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-
-import com.csc.bikelaner.db.data.DataPoint;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
-import android.provider.Settings.Secure;
 import android.util.Log;
+
+import com.csc.bikelaner.db.data.DataPoint;
 
 @SuppressLint("DefaultLocale")
 public class LocalDataStore extends SQLiteOpenHelper implements DataStore{
@@ -23,12 +25,14 @@ public class LocalDataStore extends SQLiteOpenHelper implements DataStore{
    private static final String DATABASE_NAME = "data.db";
    private static final int DATABASE_VERSION = 1;
    private static final String DATABASE_CREATE;
-   
-   public final String deviceId;
+
+   public static String getSeperator(int current, int max) {
+
+      return current < max -1 ? "," : ");";
+   }
    static {
       StringBuilder create = new StringBuilder("create table " + TABLE_NAME
             + "(");
-      SQLiteQueryBuilder query = new SQLiteQueryBuilder();
 
       DBColumn[] cols = DBColumn.values();
       for (int i = 0; i < cols.length; i++) {
@@ -36,25 +40,16 @@ public class LocalDataStore extends SQLiteOpenHelper implements DataStore{
          create.append(cols[i] + " " + cols[i].getDataType()).append(sep);
       }
       DATABASE_CREATE = create.toString();
-
-   }
-
-   public static String getSeperator(int current, int max) {
-
-      return current < max -1 ? "," : ");";
    }
    public LocalDataStore(Context context) {
      super(context, DATABASE_NAME, null, DATABASE_VERSION);
-     deviceId = Secure.getString(context.getContentResolver(),
-           Secure.ANDROID_ID);
+    
    }
 
    @Override
-   public void onCreate(SQLiteDatabase database) {
-     
-     
+   public void onCreate(SQLiteDatabase database) {    
      database.execSQL(DATABASE_CREATE);
-     Log.w("D", "created db");
+     Log.d("[local db]", "created db");
    }
 
    @Override
@@ -67,11 +62,11 @@ public class LocalDataStore extends SQLiteOpenHelper implements DataStore{
    }
    
    public enum DBColumn {
-      DEVICEID("VARCHAR(100)"), LONGITUDE("INTEGER"),LATITUDE("INTEGER"), SPEED("REAL"), SESSIONID("INTEGER");
+      DEVICEID("VARCHAR(100)"), LONGITUDE("INTEGER"),LATITUDE("INTEGER"), SPEED("REAL"), SESSIONID("LONG");
       private String type;
       
       private DBColumn(String type) {
-         this.type =type;
+         this.type = type;
       }
       
       public String getDataType() {
@@ -83,6 +78,15 @@ public class LocalDataStore extends SQLiteOpenHelper implements DataStore{
       public String toString() {
          return name().toLowerCase();
       }
+
+      public static DBColumn from(String key) {
+         for (DBColumn col : values()) {
+            if(col.toString().equalsIgnoreCase(key)) {
+               return col;
+            }
+         }
+         throw new RuntimeException("No column found for " + key);
+      }
    }
 
    @Override
@@ -91,20 +95,27 @@ public class LocalDataStore extends SQLiteOpenHelper implements DataStore{
    }
    @Override
    public void save(Collection<DataPoint> datapoints) {
-      ContentValues values = new ContentValues();
       SQLiteDatabase database = getWritableDatabase();
-      
-      database.beginTransaction();
+      Log.i("[local db]", "Saving " + datapoints);
+     // database.beginTransaction();
       for(DataPoint point : datapoints) {
          database.insert(TABLE_NAME, null, point.to());
       }
-      database.endTransaction();
+     // database.endTransaction();
       
    }
    @Override
    public Collection<DataPoint> getData(String where) {
-     
-      return null;
+      SQLiteDatabase database = getReadableDatabase();
+      Cursor query = database.query(TABLE_NAME, null, where, null, null,null,null);
+      List<DataPoint> rtn = new ArrayList<DataPoint>();
+      while(query.moveToNext()) {
+         
+         ContentValues rowValues = new ContentValues();
+         DatabaseUtils.cursorRowToContentValues(query, rowValues );
+         rtn.add(DataPoint.from(rowValues.valueSet()));
+      }
+      return rtn;
    }
 
  } 

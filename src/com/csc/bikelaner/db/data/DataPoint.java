@@ -6,10 +6,13 @@ import static com.csc.bikelaner.db.LocalDataStore.DBColumn.LONGITUDE;
 import static com.csc.bikelaner.db.LocalDataStore.DBColumn.SESSIONID;
 import static com.csc.bikelaner.db.LocalDataStore.DBColumn.SPEED;
 
+import java.util.EnumMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.content.ContentValues;
 
+import com.csc.bikelaner.db.LocalDataStore;
 import com.csc.bikelaner.db.LocalDataStore.DBColumn;
 
 public class DataPoint {
@@ -17,7 +20,7 @@ public class DataPoint {
    private Integer longitude;
    private Double speed;
    private String deviceId;
-   private String sessionId;
+   private Long sessionId;
    
    private DataPoint() {
       
@@ -42,13 +45,17 @@ public class DataPoint {
       return to;
    }
    
-   public static DataPoint from(Map<DBColumn, Object> data) {
+   public static DataPoint from(Iterable<Entry<String, Object>> results) {
+      Map<DBColumn, Object> data = new EnumMap<DBColumn, Object>(DBColumn.class);
+      for (Entry<String, Object> entry : results) {
+         data.put(DBColumn.from(entry.getKey()), entry.getValue());
+      }
       DataPoint point = new DataPoint();
       point.latitiude = Integer.parseInt(data.get(LATITUDE).toString());
       point.longitude = Integer.parseInt(data.get(LONGITUDE).toString());
       point.speed = Double.parseDouble(data.get(SPEED).toString());
-      point.sessionId = data.get(DEVICEID).toString();
-      point.deviceId = data.get(SESSIONID).toString();
+      point.sessionId = Long.parseLong(data.get(SESSIONID).toString());
+      point.deviceId = data.get(DEVICEID).toString();
       return point;
    }
 }

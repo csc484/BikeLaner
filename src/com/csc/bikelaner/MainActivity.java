@@ -9,12 +9,15 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.csc.bikelaner.db.LocalDataStore;
+import com.csc.bikelaner.db.data.DataPoint;
+import com.csc.bikelaner.db.data.Defaults;
 import com.google.android.gms.maps.SupportMapFragment;
 
 public class MainActivity extends FragmentActivity implements OnClickListener,
@@ -65,9 +68,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
 		init_Buttons();
-		
-		new LocalDataStore(getApplicationContext());
-		
+		Defaults.init(getApplicationContext());
+		LocalDataStore store = new LocalDataStore(getApplicationContext());
+		store.save(new DataPoint(1, 1, 2.4));
+		Log.i("{DF}", "" + store.getData(null));
 	}
 
 	@Override
