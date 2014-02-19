@@ -102,7 +102,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 			btnStop.setEnabled(true);
 			started = true;
 			accelData = new AccelerometerListener(sensorManager, this);
-
+			new DataController(getApplicationContext(), accelData, gpsHandler);
 			break;
 		case R.id.btnStop:
 			btnStart.setEnabled(true);
