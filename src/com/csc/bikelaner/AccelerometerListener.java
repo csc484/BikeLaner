@@ -14,12 +14,15 @@ public class AccelerometerListener extends Observable
    private SensorManager sensorManager;
    
    public AccelerometerListener(SensorManager service, Observer o) {
+      this(service);
+      addObserver(o);
+   }
+   public AccelerometerListener(SensorManager service) {
       sensorManager = service;
       accel = sensorManager
          .getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
       sensorManager.registerListener(this, accel,
          SensorManager.SENSOR_DELAY_FASTEST);
-      addObserver(o);
    }
 
    @Override

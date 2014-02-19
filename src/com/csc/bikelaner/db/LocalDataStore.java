@@ -62,7 +62,7 @@ public class LocalDataStore extends SQLiteOpenHelper implements DataStore{
    }
    
    public enum DBColumn {
-      DEVICEID("VARCHAR(100)"), LONGITUDE("INTEGER"),LATITUDE("INTEGER"), SPEED("REAL"), SESSIONID("LONG");
+      DEVICEID("VARCHAR(100)"), LONGITUDE("REAL"),LATITUDE("REAL"), SPEED("REAL"), SESSIONID("LONG");
       private String type;
       
       private DBColumn(String type) {

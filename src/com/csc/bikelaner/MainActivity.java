@@ -58,7 +58,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
       
       accelStats = new DescriptiveStatistics(POPULATION_SIZE);
 
-      new LocalDataStore(getApplicationContext());
+     
 
 		//Just to go to Mike's section
 		btnDispMap = (Button) findViewById(R.id.btnDisplayMap);
@@ -78,9 +78,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 
 		init_Buttons();
 		Defaults.init(getApplicationContext());
-		LocalDataStore store = new LocalDataStore(getApplicationContext());
-		store.save(new DataPoint(1, 1, 2.4));
-		Log.i("{DF}", "" + store.getData(null));
 	}
 
 	@Override

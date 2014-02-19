@@ -16,8 +16,8 @@ import com.csc.bikelaner.db.LocalDataStore;
 import com.csc.bikelaner.db.LocalDataStore.DBColumn;
 
 public class DataPoint {
-   private Integer latitiude;
-   private Integer longitude;
+   private Double latitiude;
+   private Double longitude;
    private Double speed;
    private String deviceId;
    private Long sessionId;
@@ -26,7 +26,7 @@ public class DataPoint {
       
    }
    
-   public DataPoint(Integer latitiude, Integer longitude, Double speed) {
+   public DataPoint(Double latitiude, Double longitude, Double speed) {
       this.latitiude = latitiude;
       this.longitude = longitude;
       this.speed = speed;
@@ -51,8 +51,8 @@ public class DataPoint {
          data.put(DBColumn.from(entry.getKey()), entry.getValue());
       }
       DataPoint point = new DataPoint();
-      point.latitiude = Integer.parseInt(data.get(LATITUDE).toString());
-      point.longitude = Integer.parseInt(data.get(LONGITUDE).toString());
+      point.latitiude = Double.parseDouble(data.get(LATITUDE).toString());
+      point.longitude = Double.parseDouble(data.get(LONGITUDE).toString());
       point.speed = Double.parseDouble(data.get(SPEED).toString());
       point.sessionId = Long.parseLong(data.get(SESSIONID).toString());
       point.deviceId = data.get(DEVICEID).toString();

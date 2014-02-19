@@ -91,6 +91,20 @@ public class GPSHandler implements android.location.LocationListener {
 					DEFAULT_ZOOM_LEVEL));
 		}
 	}
+	
+	public LatLng getLocation() {
+	// Create a location manager to get a service location provider
+      // to find my location.
+      String provider = locationManager.getBestProvider(new Criteria(), true);
+      Location location = locationManager.getLastKnownLocation(provider);
+
+      // Set the camera to my location
+      if (location != null) {
+         return new LatLng(location.getLatitude(),
+               location.getLongitude());
+      }
+      return null;
+	}
 
 	@Override
 	public void onProviderDisabled(String arg0) {
