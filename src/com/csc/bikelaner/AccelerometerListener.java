@@ -16,7 +16,7 @@ public class AccelerometerListener extends Observable
    public AccelerometerListener(SensorManager service, Observer o) {
       sensorManager = service;
       accel = sensorManager
-         .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+         .getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
       sensorManager.registerListener(this, accel,
          SensorManager.SENSOR_DELAY_FASTEST);
       addObserver(o);

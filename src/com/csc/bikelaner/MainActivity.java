@@ -1,11 +1,14 @@
 package com.csc.bikelaner;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
 import android.content.Context;
 import android.hardware.SensorManager;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -18,38 +21,44 @@ import android.widget.Button;
 import com.csc.bikelaner.db.LocalDataStore;
 import com.csc.bikelaner.db.data.DataPoint;
 import com.csc.bikelaner.db.data.Defaults;
-import com.google.android.gms.maps.SupportMapFragment;
 
 public class MainActivity extends FragmentActivity implements OnClickListener,
 		Observer {
+   private static final int POPULATION_SIZE = 300;
+   
 	private SensorManager sensorManager;
-	private Button btnStart, btnStop, btnDisplayX, btnDisplayY, btnDisplayZ, btnDispMap;
+	Button btnStart, btnStop, btnDisplayR, btnDisplayMean, btnDisplayStdDev, btnDispMap;
 	private boolean started = false;
 	private AccelerometerListener accelData;
+   private DescriptiveStatistics accelStats;
 	private GPSHandler gpsHandler;
 
 	public void init_Buttons() {
 		// Nichols stuff
-		btnStart = (Button) findViewById(R.id.btnStart);
-		btnStop = (Button) findViewById(R.id.btnStop);
-		btnDisplayX = (Button) findViewById(R.id.btnDisplayX);
-		btnDisplayY = (Button) findViewById(R.id.btnDisplayY);
-		btnDisplayZ = (Button) findViewById(R.id.btnDisplayZ);
-		btnStart.setOnClickListener(this);
-		btnStop.setOnClickListener(this);
-		btnDisplayX.setOnClickListener(this);
-		btnDisplayY.setOnClickListener(this);
-		btnDisplayZ.setOnClickListener(this);
-		btnStart.setEnabled(true);
-		btnStop.setEnabled(false);
-		btnDisplayX.setEnabled(false);
-		btnDisplayY.setEnabled(false);
-		btnDisplayZ.setEnabled(false);
-		btnStart.setText("Start");
-		btnStop.setText("Stop");
-		btnDisplayX.setText("<X>");
-		btnDisplayY.setText("<Y>");
-		btnDisplayZ.setText("<Z>");
+	   btnStart = (Button) findViewById(R.id.btnStart);
+      btnStop = (Button) findViewById(R.id.btnStop);
+      btnDisplayR = (Button) findViewById(R.id.btnDisplayR);
+      btnDisplayMean = (Button) findViewById(R.id.btnDisplayMean);
+      btnDisplayStdDev = (Button) findViewById(R.id.btnDisplayStdDev);
+      btnStart.setOnClickListener(this);
+      btnStop.setOnClickListener(this);
+      btnDisplayR.setOnClickListener(this);
+      btnDisplayMean.setOnClickListener(this);
+      btnDisplayStdDev.setOnClickListener(this);
+      btnStart.setEnabled(true);
+      btnStop.setEnabled(false);
+      btnDisplayR.setEnabled(false);
+      btnDisplayMean.setEnabled(false);
+      btnDisplayStdDev.setEnabled(false);
+      btnStart.setText("Start");
+      btnStop.setText("Stop");
+      btnDisplayR.setText("<R>");
+      btnDisplayMean.setText("<Average>");
+      btnDisplayStdDev.setText("<Standard Deviation>");
+      
+      accelStats = new DescriptiveStatistics(POPULATION_SIZE);
+
+      new LocalDataStore(getApplicationContext());
 
 		//Just to go to Mike's section
 		btnDispMap = (Button) findViewById(R.id.btnDisplayMap);
@@ -125,12 +134,20 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	}
 
 	@Override
-	public void update(Observable observable, Object data) {
-		// TODO Auto-generated method stub
-		AccelData sensorData = (AccelData) data;
+   public void update(Observable observable, Object data) {
+      // TODO Auto-generated method stub
+      AccelData sensorData = (AccelData) data;
+      
+      double x2 = Math.pow(sensorData.getX(), 2);
+      double y2 = Math.pow(sensorData.getY(), 2);
+      double z2 = Math.pow(sensorData.getZ(), 2);
 
-		btnDisplayX.setText(String.valueOf(sensorData.getX()));
-		btnDisplayY.setText(String.valueOf(sensorData.getY()));
-		btnDisplayZ.setText(String.valueOf(sensorData.getZ()));
-	}
+      double r = Math.sqrt(x2 + y2 + z2);
+      
+      accelStats.addValue(r);
+      
+      btnDisplayR.setText(BigDecimal.valueOf(r).setScale(1, RoundingMode.FLOOR).toString());
+      btnDisplayMean.setText(BigDecimal.valueOf(accelStats.getMean()).setScale(1, RoundingMode.FLOOR).toString());
+      btnDisplayStdDev.setText(BigDecimal.valueOf(accelStats.getStandardDeviation()).setScale(1, RoundingMode.FLOOR).toString());
+   }
 }
