@@ -58,7 +58,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
       
       accelStats = new DescriptiveStatistics(POPULATION_SIZE);
 
-     
+      LocationManager manager = (LocationManager) getSystemService(LOCATION_SERVICE);               
+      this.gpsHandler = new GPSHandler(manager, getSupportFragmentManager());
 
 		//Just to go to Mike's section
 		btnDispMap = (Button) findViewById(R.id.btnDisplayMap);
@@ -113,8 +114,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 			break;
 		case R.id.btnDisplayMap:
 			setContentView(R.layout.map_layout);
-			LocationManager manager = (LocationManager) getSystemService(LOCATION_SERVICE);					
-			gpsHandler = new GPSHandler(manager, getSupportFragmentManager());
+			
 			gpsHandler.initiate();		
 			break;
 		default:
