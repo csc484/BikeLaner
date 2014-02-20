@@ -4,3 +4,4 @@ gen/*
 # Package Files #
 *.war
 *.ear
+/project.properties
