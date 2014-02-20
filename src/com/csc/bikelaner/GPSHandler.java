@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
+import com.google.maps.android.heatmaps.WeightedLatLng;
 
 public class GPSHandler implements android.location.LocationListener {
 	/** The interactive Google Map fragment. */
@@ -168,7 +169,7 @@ public class GPSHandler implements android.location.LocationListener {
 		store.generateDummyData();
 		
 		ArrayList<DataPoint> list = new ArrayList<DataPoint>(store.getData(null));
-		ArrayList<LatLng> ltlnglist = new ArrayList<LatLng>();
+		ArrayList<WeightedLatLng> ltlnglist = new ArrayList<WeightedLatLng>();
 		
 		LatLng latLng = new LatLng(37.782551, -122.445368);
 		m_vwMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
@@ -176,9 +177,9 @@ public class GPSHandler implements android.location.LocationListener {
 				16));				
 		for (DataPoint p : list) {
 			System.out.println("point: " + p.toString());
-			ltlnglist.add(p.getLatLng());
+			ltlnglist.add(p.getWeightedLatLng());
 		}
-		mProvider = new HeatmapTileProvider.Builder().data(ltlnglist).build();
+		mProvider = new HeatmapTileProvider.Builder().weightedData(ltlnglist).build();
 		mOverlay = m_vwMap.addTileOverlay(
 				new TileOverlayOptions().tileProvider(mProvider));
 		System.out.println(list);
@@ -186,7 +187,7 @@ public class GPSHandler implements android.location.LocationListener {
 	
 	public void getLocalData() {		
 		ArrayList<DataPoint> list = new ArrayList<DataPoint>(store.getData(null));
-		ArrayList<LatLng> ltlnglist = new ArrayList<LatLng>();
+		ArrayList<WeightedLatLng> ltlnglist = new ArrayList<WeightedLatLng>();
 		
 		if (!list.isEmpty()) {
 			m_vwMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
@@ -195,13 +196,9 @@ public class GPSHandler implements android.location.LocationListener {
 		}
 		for (DataPoint p : list) {
 			System.out.println("point: " + p.toString());
-			ltlnglist.add(p.getLatLng());
+			ltlnglist.add(p.getWeightedLatLng());
 		}
-		LatLng latLng = new LatLng(37.782551, -122.445368);
-		m_vwMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-				latLng,
-				16));
-		mProvider = new HeatmapTileProvider.Builder().data(ltlnglist).build();
+		mProvider = new HeatmapTileProvider.Builder().weightedData(ltlnglist).build();
 		mOverlay = m_vwMap.addTileOverlay(
 				new TileOverlayOptions().tileProvider(mProvider));
 		System.out.println(list);

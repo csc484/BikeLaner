@@ -15,6 +15,7 @@ import android.content.ContentValues;
 import com.csc.bikelaner.db.LocalDataStore;
 import com.csc.bikelaner.db.LocalDataStore.DBColumn;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.heatmaps.WeightedLatLng;
 
 public class DataPoint {
 	private Double latitude;
@@ -78,5 +79,9 @@ public class DataPoint {
 	
 	public LatLng getLatLng() {
 		return new LatLng(latitude, longitude);
+	}
+	
+	public WeightedLatLng getWeightedLatLng() {
+		return new WeightedLatLng(new LatLng(latitude, longitude), speed);
 	}
 }
