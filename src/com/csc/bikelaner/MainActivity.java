@@ -8,6 +8,8 @@ import java.util.Observer;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -69,7 +71,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 		btnDispMap.setEnabled(true);
 		btnDispMap.setOnClickListener(this);
 	}
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
