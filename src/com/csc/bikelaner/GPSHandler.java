@@ -87,8 +87,8 @@ public class GPSHandler implements android.location.LocationListener {
 		initMapSettings();
 		setCameraToMyLocation();
 		createPointsOnMap();
-		//makeDummyHeatMap();		
-		getLocalData();
+		makeDummyHeatMap();		
+		//getLocalData();
 	}
 
 
@@ -165,17 +165,23 @@ public class GPSHandler implements android.location.LocationListener {
 	}
 
 	public void makeDummyHeatMap() {
-		ArrayList<LatLng> list = new ArrayList<LatLng>(
-				Arrays.asList(dummy_taxiData));
-		System.out.println("GPSHANDLER: " + list.size());
-		mProvider = new HeatmapTileProvider.Builder().data(list).build();
+		store.generateDummyData();
+		
+		ArrayList<DataPoint> list = new ArrayList<DataPoint>(store.getData(null));
+		ArrayList<LatLng> ltlnglist = new ArrayList<LatLng>();
+		
+		LatLng latLng = new LatLng(37.782551, -122.445368);
+		m_vwMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+				latLng,
+				16));				
+		for (DataPoint p : list) {
+			System.out.println("point: " + p.toString());
+			ltlnglist.add(p.getLatLng());
+		}
+		mProvider = new HeatmapTileProvider.Builder().data(ltlnglist).build();
 		mOverlay = m_vwMap.addTileOverlay(
 				new TileOverlayOptions().tileProvider(mProvider));
-
-		//TODO: remove this dummy taxi initial data
-		LatLng latLng = new LatLng(37.782551, -122.445368);
-		m_vwMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,
-				DEFAULT_ZOOM_LEVEL));
+		System.out.println(list);
 	}
 	
 	public void getLocalData() {		
@@ -191,6 +197,10 @@ public class GPSHandler implements android.location.LocationListener {
 			System.out.println("point: " + p.toString());
 			ltlnglist.add(p.getLatLng());
 		}
+		LatLng latLng = new LatLng(37.782551, -122.445368);
+		m_vwMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+				latLng,
+				16));
 		mProvider = new HeatmapTileProvider.Builder().data(ltlnglist).build();
 		mOverlay = m_vwMap.addTileOverlay(
 				new TileOverlayOptions().tileProvider(mProvider));
