@@ -182,7 +182,7 @@ public class GPSHandler implements android.location.LocationListener {
       return null;
 	}
    
-   private static final LatLng dummy_taxiData[] = {
+   public static final LatLng dummy_taxiData[] = {
 	   new LatLng(37.782551, -122.445368),
 	   new LatLng(37.782745, -122.444586),
 	   new LatLng(37.782842, -122.443688),

@@ -14,7 +14,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.csc.bikelaner.GPSHandler;
 import com.csc.bikelaner.db.data.DataPoint;
+import com.google.android.gms.maps.model.LatLng;
 
 @SuppressLint("DefaultLocale")
 public class LocalDataStore extends SQLiteOpenHelper implements DataStore{
@@ -104,6 +106,7 @@ public class LocalDataStore extends SQLiteOpenHelper implements DataStore{
      // database.endTransaction();
       
    }
+   
    @Override
    public Collection<DataPoint> getData(String where) {
       SQLiteDatabase database = getReadableDatabase();
@@ -116,6 +119,15 @@ public class LocalDataStore extends SQLiteOpenHelper implements DataStore{
          rtn.add(DataPoint.from(rowValues.valueSet()));
       }
       return rtn;
+   }
+
+   public void generateDummyData() {
+      LatLng[] dummy = GPSHandler.dummy_taxiData;
+      List<DataPoint> store = new ArrayList<DataPoint>();
+      for (int i = 0; i < dummy.length ; i++) {
+         store.add(new DataPoint(dummy[i].latitude, dummy[i].longitude, (1.0 * i)%10));
+      }
+      save(store);
    }
 
  } 
