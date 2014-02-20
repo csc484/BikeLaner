@@ -2,6 +2,8 @@ package com.csc.bikelaner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import android.graphics.Color;
 import android.location.Criteria;
@@ -12,6 +14,9 @@ import android.support.v4.app.FragmentManager;
 import android.text.method.LinkMovementMethod;
 import android.widget.Toast;
 
+import com.csc.bikelaner.db.DataStore;
+import com.csc.bikelaner.db.LocalDataStore;
+import com.csc.bikelaner.db.data.DataPoint;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -30,6 +35,7 @@ public class GPSHandler implements android.location.LocationListener {
 	private GoogleMap m_vwMap;
 	private final LocationManager locationManager;
 	private final FragmentManager fragmentManager;
+	private LocalDataStore store;
 
 	/** The list of locations, each having a latitude and longitude. */
 	private ArrayList<LatLng> m_arrPathPoints;
@@ -43,7 +49,8 @@ public class GPSHandler implements android.location.LocationListener {
 	
 	private static final int[] ALT_HEATMAP_GRADIENT_COLORS = {
 			Color.argb(0, 0, 255, 255),// transparent
-			Color.argb(255 / 3 * 2, 0, 255, 255), Color.rgb(0, 191, 255),
+			Color.argb(255 / 3 * 2, 0, 255, 255),
+			Color.rgb(0, 191, 255),
 			Color.rgb(0, 0, 127), Color.rgb(255, 0, 0) };
 
 	public static final float[] ALT_HEATMAP_GRADIENT_START_POINTS = { 0.0f,
@@ -60,11 +67,11 @@ public class GPSHandler implements android.location.LocationListener {
 	private boolean mDefaultOpacity = true;
 
 	public GPSHandler(LocationManager locationManager,
-			FragmentManager fragmentManager) {
+			FragmentManager fragmentManager, LocalDataStore store) {
 		this.locationManager = locationManager;
 		this.fragmentManager = fragmentManager;
 		m_arrPathPoints = new ArrayList<LatLng>();
-
+		this.store = store;
 	}
 
 	public void createPointsOnMap() {
@@ -80,9 +87,12 @@ public class GPSHandler implements android.location.LocationListener {
 		initMapSettings();
 		setCameraToMyLocation();
 		createPointsOnMap();
-		makeDummyHeatMap();
+		//makeDummyHeatMap();		
+		getLocalData();
 	}
 
+
+	
 	public void initMapLayout() {
 		// Obtain the support map fragment specified in the XML to get the map
 		// object
@@ -166,6 +176,25 @@ public class GPSHandler implements android.location.LocationListener {
 		LatLng latLng = new LatLng(37.782551, -122.445368);
 		m_vwMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,
 				DEFAULT_ZOOM_LEVEL));
+	}
+	
+	public void getLocalData() {		
+		ArrayList<DataPoint> list = new ArrayList<DataPoint>(store.getData(null));
+		ArrayList<LatLng> ltlnglist = new ArrayList<LatLng>();
+		
+		if (!list.isEmpty()) {
+			m_vwMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+					list.get(0).getLatLng(),
+					DEFAULT_ZOOM_LEVEL));
+		}
+		for (DataPoint p : list) {
+			System.out.println("point: " + p.toString());
+			ltlnglist.add(p.getLatLng());
+		}
+		mProvider = new HeatmapTileProvider.Builder().data(ltlnglist).build();
+		mOverlay = m_vwMap.addTileOverlay(
+				new TileOverlayOptions().tileProvider(mProvider));
+		System.out.println(list);
 	}
    
    public LatLng getLocation() {

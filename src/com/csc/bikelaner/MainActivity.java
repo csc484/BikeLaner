@@ -24,47 +24,49 @@ import com.csc.bikelaner.db.data.Defaults;
 
 public class MainActivity extends FragmentActivity implements OnClickListener,
 		Observer {
-   private static final int POPULATION_SIZE = 300;
-   
+	private static final int POPULATION_SIZE = 300;
+
 	private SensorManager sensorManager;
-	Button btnStart, btnStop, btnDisplayR, btnDisplayMean, btnDisplayStdDev, btnDispMap;
+	Button btnStart, btnStop, btnDisplayR, btnDisplayMean, btnDisplayStdDev,
+			btnDispMap;
 	private boolean started = false;
 	private AccelerometerListener accelData;
-   private DescriptiveStatistics accelStats;
+	private DescriptiveStatistics accelStats;
 	private GPSHandler gpsHandler;
 
 	public void init_Buttons() {
 		// Nichols stuff
-	   btnStart = (Button) findViewById(R.id.btnStart);
-      btnStop = (Button) findViewById(R.id.btnStop);
-      btnDisplayR = (Button) findViewById(R.id.btnDisplayR);
-      btnDisplayMean = (Button) findViewById(R.id.btnDisplayMean);
-      btnDisplayStdDev = (Button) findViewById(R.id.btnDisplayStdDev);
-      btnStart.setOnClickListener(this);
-      btnStop.setOnClickListener(this);
-      btnDisplayR.setOnClickListener(this);
-      btnDisplayMean.setOnClickListener(this);
-      btnDisplayStdDev.setOnClickListener(this);
-      btnStart.setEnabled(true);
-      btnStop.setEnabled(false);
-      btnDisplayR.setEnabled(false);
-      btnDisplayMean.setEnabled(false);
-      btnDisplayStdDev.setEnabled(false);
-      btnStart.setText("Start");
-      btnStop.setText("Stop");
-      btnDisplayR.setText("<R>");
-      btnDisplayMean.setText("<Average>");
-      btnDisplayStdDev.setText("<Standard Deviation>");
-      
-      accelStats = new DescriptiveStatistics(POPULATION_SIZE);
+		btnStart = (Button) findViewById(R.id.btnStart);
+		btnStop = (Button) findViewById(R.id.btnStop);
+		btnDisplayR = (Button) findViewById(R.id.btnDisplayR);
+		btnDisplayMean = (Button) findViewById(R.id.btnDisplayMean);
+		btnDisplayStdDev = (Button) findViewById(R.id.btnDisplayStdDev);
+		btnStart.setOnClickListener(this);
+		btnStop.setOnClickListener(this);
+		btnDisplayR.setOnClickListener(this);
+		btnDisplayMean.setOnClickListener(this);
+		btnDisplayStdDev.setOnClickListener(this);
+		btnStart.setEnabled(true);
+		btnStop.setEnabled(false);
+		btnDisplayR.setEnabled(false);
+		btnDisplayMean.setEnabled(false);
+		btnDisplayStdDev.setEnabled(false);
+		btnStart.setText("Start");
+		btnStop.setText("Stop");
+		btnDisplayR.setText("<R>");
+		btnDisplayMean.setText("<Average>");
+		btnDisplayStdDev.setText("<Standard Deviation>");
 
-      LocationManager manager = (LocationManager) getSystemService(LOCATION_SERVICE);               
-      this.gpsHandler = new GPSHandler(manager, getSupportFragmentManager());
+		accelStats = new DescriptiveStatistics(POPULATION_SIZE);
 
-		//Just to go to Mike's section
+		LocationManager manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		this.gpsHandler = new GPSHandler(manager, getSupportFragmentManager(),
+				new LocalDataStore(getApplicationContext()));
+
+		// Just to go to Mike's section
 		btnDispMap = (Button) findViewById(R.id.btnDisplayMap);
 		btnDispMap.setText("DisplayMap");
-		btnDispMap.setEnabled(true);		
+		btnDispMap.setEnabled(true);
 		btnDispMap.setOnClickListener(this);
 	}
 
@@ -114,8 +116,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 			break;
 		case R.id.btnDisplayMap:
 			setContentView(R.layout.map_layout);
-			
-			gpsHandler.initiate();		
+
+			gpsHandler.initiate();
 			break;
 		default:
 			break;
@@ -131,20 +133,24 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	}
 
 	@Override
-   public void update(Observable observable, Object data) {
-      // TODO Auto-generated method stub
-      AccelData sensorData = (AccelData) data;
-      
-      double x2 = Math.pow(sensorData.getX(), 2);
-      double y2 = Math.pow(sensorData.getY(), 2);
-      double z2 = Math.pow(sensorData.getZ(), 2);
+	public void update(Observable observable, Object data) {
+		// TODO Auto-generated method stub
+		AccelData sensorData = (AccelData) data;
 
-      double r = Math.sqrt(x2 + y2 + z2);
-      
-      accelStats.addValue(r);
-      
-      btnDisplayR.setText(BigDecimal.valueOf(r).setScale(1, RoundingMode.FLOOR).toString());
-      btnDisplayMean.setText(BigDecimal.valueOf(accelStats.getMean()).setScale(1, RoundingMode.FLOOR).toString());
-      btnDisplayStdDev.setText(BigDecimal.valueOf(accelStats.getStandardDeviation()).setScale(1, RoundingMode.FLOOR).toString());
-   }
+		double x2 = Math.pow(sensorData.getX(), 2);
+		double y2 = Math.pow(sensorData.getY(), 2);
+		double z2 = Math.pow(sensorData.getZ(), 2);
+
+		double r = Math.sqrt(x2 + y2 + z2);
+
+		accelStats.addValue(r);
+
+		btnDisplayR.setText(BigDecimal.valueOf(r)
+				.setScale(1, RoundingMode.FLOOR).toString());
+		btnDisplayMean.setText(BigDecimal.valueOf(accelStats.getMean())
+				.setScale(1, RoundingMode.FLOOR).toString());
+		btnDisplayStdDev.setText(BigDecimal
+				.valueOf(accelStats.getStandardDeviation())
+				.setScale(1, RoundingMode.FLOOR).toString());
+	}
 }
