@@ -22,6 +22,9 @@ public class NewMainActivity extends Activity {
 	
 	/** Running state **/
 	boolean m_running;
+
+	/** Location foreground service **/
+	protected Intent m_dataService;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +49,12 @@ public class NewMainActivity extends Activity {
 				public void onClick(View v) {
 					Resources r = getResources();
 					if (!m_running) {
-						m_running = true;
+						initDataService();
 						m_vwStartButton.setText(r.getString(R.string.stop_button));	
 					}
 					else {
 						m_running = false;
+						stopDataService();
 						m_vwStartButton.setText(r.getString(R.string.start_button));
 					}
 				}
@@ -65,6 +69,17 @@ public class NewMainActivity extends Activity {
 					startActivity(i);		
 				} 
 			});
+	}
+	
+	private void initDataService() {
+		m_running = true;
+		m_dataService = new Intent(this, MainService.class);
+		Log.d("initDataService", "starting dataService");
+		startService(m_dataService);
+	}
+	
+	private void stopDataService() {
+		stopService(m_dataService);
 	}
 
 	@Override

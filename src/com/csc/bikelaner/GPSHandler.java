@@ -35,7 +35,7 @@ public class GPSHandler implements android.location.LocationListener {
 	/** The interactive Google Map fragment. */
 	private GoogleMap m_vwMap;
 	private final LocationManager locationManager;
-	private final FragmentManager fragmentManager;
+	//private final FragmentManager fragmentManager;
 	private LocalDataStore store;
 
 	/** The list of locations, each having a latitude and longitude. */
@@ -66,11 +66,18 @@ public class GPSHandler implements android.location.LocationListener {
 	private boolean mDefaultGradient = true;
 	private boolean mDefaultRadius = true;
 	private boolean mDefaultOpacity = true;
+	private FragmentManager fragmentManager;
 
 	public GPSHandler(LocationManager locationManager,
 			FragmentManager fragmentManager, LocalDataStore store) {
 		this.locationManager = locationManager;
 		this.fragmentManager = fragmentManager;
+		m_arrPathPoints = new ArrayList<LatLng>();
+		this.store = store;
+	}
+	
+	public GPSHandler(LocationManager locationManager, LocalDataStore store) {
+		this.locationManager = locationManager;
 		m_arrPathPoints = new ArrayList<LatLng>();
 		this.store = store;
 	}
@@ -84,11 +91,11 @@ public class GPSHandler implements android.location.LocationListener {
 	}
 
 	public void initiate() {
-		initMapLayout();
-		initMapSettings();
-		setCameraToMyLocation();
-		createPointsOnMap();
-		makeDummyHeatMap();		
+		//initMapLayout();
+		//initMapSettings();
+		//setCameraToMyLocation();
+		//createPointsOnMap();
+		//makeDummyHeatMap();		
 		//getLocalData();
 	}
 
@@ -156,12 +163,12 @@ public class GPSHandler implements android.location.LocationListener {
 					location.getLongitude());
 			m_arrPathPoints.add(loc);
 
-			m_pathLine.setPoints(m_arrPathPoints);
+		/*	m_pathLine.setPoints(m_arrPathPoints);
 			m_vwMap.addCircle(new CircleOptions().center(loc)
 					.radius(CIRCLE_RADIUS).fillColor(Color.CYAN)
 					.strokeColor(Color.BLUE));
 			m_vwMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc,
-					DEFAULT_ZOOM_LEVEL));
+					DEFAULT_ZOOM_LEVEL));*/
 		}
 	}
 

@@ -8,5 +8,7 @@
     <string name="start_button">Start</string>
     <string name="stop_button">Stop</string>
     <string name="map_button">Map</string>
+    <string name ="onGoingNotificationTitle">BikeLaner service is active</string>
+    
 
 </resources>
