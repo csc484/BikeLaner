@@ -19,6 +19,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
@@ -38,6 +39,9 @@ import com.google.android.gms.maps.model.LatLng;
 public class MainService extends Service implements LocationListener, Observer {
 	private static final int POPULATION_SIZE = 300;
 
+	/** Bindings! **/
+	private final IBinder mBinder = new LocalBinder();
+	
 	private SensorManager sensorManager;
 	Button btnStart, btnStop, btnDisplayR, btnDisplayMean, btnDisplayStdDev,
 			btnDispMap;
@@ -45,6 +49,7 @@ public class MainService extends Service implements LocationListener, Observer {
 	private AccelerometerListener accelData;
 	private DescriptiveStatistics accelStats;
 	private LocalDataStore store;
+	private GPSHandler gpshandler;
 
 	private boolean isRunning;
 
@@ -94,6 +99,7 @@ public class MainService extends Service implements LocationListener, Observer {
 		m_locManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 		onLocationChanged(m_locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+		// TIMER: start the timer to call onlocation call.
 		m_locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, this);
 	}
 
@@ -103,6 +109,9 @@ public class MainService extends Service implements LocationListener, Observer {
 			LatLng loc = new LatLng(location.getLatitude(),
 					location.getLongitude());
 			m_arrPathPoints.add(loc);
+			if (gpshandler != null) {
+				gpshandler.update();
+			}
 		}
 	}
 
@@ -149,8 +158,7 @@ public class MainService extends Service implements LocationListener, Observer {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO Auto-generated method stub
-		return null;
+		return mBinder;
 	}
 
 	@Override
@@ -170,4 +178,23 @@ public class MainService extends Service implements LocationListener, Observer {
 		// TODO Auto-generated method stub
 
 	}
+	
+	public LocationManager getLocationManager() {
+		return m_locManager;		
+	}
+	
+	public LocalDataStore getStore() {
+		return store;		
+	}
+	
+	public void setGPSHandler(GPSHandler gpshandler) {
+		this.gpshandler = gpshandler;
+	}
+	
+	public class LocalBinder extends Binder {
+        MainService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return MainService.this;
+        }
+    }
 }

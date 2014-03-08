@@ -32,17 +32,23 @@
 	    
 	    <Button
 	        android:id="@+id/start_button"
-	        android:layout_width="125sp"
-	        android:layout_height="50sp"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
 	        android:layout_gravity="center"
-	        android:layout_margin="50sp"
 	        android:text="@string/start_button"/>   
 
+	    <Button
+	        android:id="@+id/map_button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"	        
+	        android:text="@string/map_button"/> 
+	    
 	    <Button
 	        android:id="@+id/debug_button"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_gravity="bottom|right"
+	        android:layout_gravity="center"
 	        android:text="debug" />
 	    
      </LinearLayout>

@@ -31,7 +31,7 @@ import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.google.maps.android.heatmaps.WeightedLatLng;
 
-public class GPSHandler implements android.location.LocationListener {
+public class GPSHandler {
 	/** The interactive Google Map fragment. */
 	private GoogleMap m_vwMap;
 	private final LocationManager locationManager;
@@ -85,18 +85,16 @@ public class GPSHandler implements android.location.LocationListener {
 	public void createPointsOnMap() {
 		m_pathLine = m_vwMap.addPolyline(new PolylineOptions());
 		m_pathLine.setColor(Color.GREEN);
-		// TIMER: start the timer to call onlocation call.
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				10000, 0, this);
+
 	}
 
 	public void initiate() {
-		//initMapLayout();
-		//initMapSettings();
-		//setCameraToMyLocation();
-		//createPointsOnMap();
+		initMapLayout();
+		initMapSettings();
+		setCameraToMyLocation();
+		createPointsOnMap();
 		//makeDummyHeatMap();		
-		//getLocalData();
+		getLocalData();
 	}
 
 
@@ -107,6 +105,7 @@ public class GPSHandler implements android.location.LocationListener {
 		new com.google.android.gms.maps.model.LatLng(37.782551, -122.445368);
 		SupportMapFragment map = (SupportMapFragment) fragmentManager
 				.findFragmentById(R.id.map);
+		assert (map != null);
 		m_vwMap = map.getMap();
 		assert (m_vwMap != null);
 
@@ -135,43 +134,7 @@ public class GPSHandler implements android.location.LocationListener {
 					DEFAULT_ZOOM_LEVEL));
 		}
 	}
-
-	@Override
-	public void onProviderDisabled(String arg0) {
-		// TODO Auto-generated method stub
-		Location location = locationManager
-				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		onLocationChanged(location);
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-		if (location != null) {
-			LatLng loc = new LatLng(location.getLatitude(),
-					location.getLongitude());
-			m_arrPathPoints.add(loc);
-
-		/*	m_pathLine.setPoints(m_arrPathPoints);
-			m_vwMap.addCircle(new CircleOptions().center(loc)
-					.radius(CIRCLE_RADIUS).fillColor(Color.CYAN)
-					.strokeColor(Color.BLUE));
-			m_vwMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc,
-					DEFAULT_ZOOM_LEVEL));*/
-		}
-	}
-
+	
 	public void makeDummyHeatMap() {
 		store.generateDummyData();
 		
@@ -202,7 +165,7 @@ public class GPSHandler implements android.location.LocationListener {
 					DEFAULT_ZOOM_LEVEL));
 		}
 		for (DataPoint p : list) {
-			System.out.println("point: " + p.toString());
+			//System.out.println("point: " + p.toString());
 			ltlnglist.add(p.getWeightedLatLng());
 		}
 		mProvider = new HeatmapTileProvider.Builder().weightedData(ltlnglist).build();
@@ -224,6 +187,11 @@ public class GPSHandler implements android.location.LocationListener {
       }
       return null;
 	}
+   
+   public void update() {
+	   System.out.println("Janky as fuark");
+	   getLocalData();
+   }
    
    public static final LatLng dummy_taxiData[] = {
 	   new LatLng(37.782551, -122.445368),
