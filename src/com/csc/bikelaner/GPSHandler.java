@@ -191,7 +191,7 @@ public class GPSHandler implements android.location.LocationListener {
 				new TileOverlayOptions().tileProvider(mProvider));
 		System.out.println(list);
 	}
-	//test
+	//testt
 	public void getLocalData() {		
 		ArrayList<DataPoint> list = new ArrayList<DataPoint>(store.getData(null));
 		ArrayList<WeightedLatLng> ltlnglist = new ArrayList<WeightedLatLng>();
