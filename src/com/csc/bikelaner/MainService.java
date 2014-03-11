@@ -105,6 +105,11 @@ public class MainService extends Service implements LocationListener, Observer {
 			m_arrPathPoints.add(loc);
 		}
 	}
+	
+	@Override
+	public void onDestroy() {
+		m_locManager.removeUpdates(this);
+	}
 
 	@Override
 	public void update(Observable observable, Object data) {
